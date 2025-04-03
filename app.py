@@ -9,7 +9,8 @@ def load_image():
     uploaded_file = st.sidebar.file_uploader("Upload an image", type=["jpg", "jpeg", "png"], help="Supports JPG, JPEG, PNG")
     if uploaded_file is not None:
         image = Image.open(uploaded_file)
-        return np.array(image)
+        # Convert PIL Image to RGB numpy array
+        return cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR)
     return None
 
 def apply_fourier_transform(image):
@@ -50,10 +51,17 @@ def apply_unsharp_mask(image):
     sharpened = cv2.addWeighted(image, 1.5, blurred, -0.5, 0)
     return sharpened
 
+def display_image(image, is_gray=False):
+    """Helper function to properly display images in Streamlit"""
+    if is_gray:
+        return st.image(image, clamp=True)
+    else:
+        return st.image(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
+
 def main():
     st.set_page_config(page_title="Advanced Image Processing", layout="wide")
-    st.title("🔬 Image Processing Toolbox")
-    st.markdown("Built by a college student who loves CV & AI! 🎓👨‍💻")
+    st.title("Image Processing Toolbox")
+    st.markdown("Visualize image processing!")
 
     uploaded_image = load_image()
     processing_option = st.sidebar.selectbox(
@@ -62,14 +70,19 @@ def main():
     )
 
     if uploaded_image is not None:
-        st.sidebar.image(uploaded_image, caption="Uploaded Image", use_column_width=True)
+        # Display original image in sidebar (convert BGR to RGB)
+        st.sidebar.image(cv2.cvtColor(uploaded_image, cv2.COLOR_BGR2RGB), caption="Uploaded Image", use_column_width=True)
+        
         col1, col2 = st.columns(2)
         with col1:
             st.subheader("Original Image")
-            st.image(uploaded_image, channels="BGR")
+            display_image(uploaded_image)
         
         with col2:
             st.subheader("Processed Image")
+            processed_image = None
+            is_gray = True  # Most operations return grayscale images
+            
             if processing_option == "Frequency Domain":
                 processed_image = apply_fourier_transform(uploaded_image)
             elif processing_option == "Edge Detection":
@@ -84,15 +97,23 @@ def main():
                 processed_image = apply_adaptive_threshold(uploaded_image)
             elif processing_option == "Unsharp Masking":
                 processed_image = apply_unsharp_mask(uploaded_image)
-                st.image(processed_image, channels="BGR")
+                is_gray = False  # Unsharp masking returns a color image
             
-            if 'processed_image' in locals():
+            if processed_image is not None:
+                display_image(processed_image, is_gray)
+                
+                # Prepare image for download
                 buf = io.BytesIO()
                 if len(processed_image.shape) == 2:
                     Image.fromarray(processed_image).save(buf, format="PNG")
                 else:
                     Image.fromarray(cv2.cvtColor(processed_image, cv2.COLOR_BGR2RGB)).save(buf, format="PNG")
-                st.download_button("Download Processed Image", data=buf.getvalue(), file_name="processed_image.png", mime="image/png")
+                st.download_button(
+                    "Download Processed Image",
+                    data=buf.getvalue(),
+                    file_name="processed_image.png",
+                    mime="image/png"
+                )
 
 if __name__ == "__main__":
     main()
