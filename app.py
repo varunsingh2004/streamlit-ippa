@@ -71,7 +71,7 @@ def main():
 
     if uploaded_image is not None:
         # Display original image in sidebar (convert BGR to RGB)
-        st.sidebar.image(cv2.cvtColor(uploaded_image, cv2.COLOR_BGR2RGB), caption="Uploaded Image", use_column_width=True)
+        # st.sidebar.image(cv2.cvtColor(uploaded_image, cv2.COLOR_BGR2RGB), caption="Uploaded Image", use_column_width=True)
         
         col1, col2 = st.columns(2)
         with col1:
