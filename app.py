@@ -34,14 +34,6 @@ def apply_histogram_equalization(image):
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     return cv2.equalizeHist(gray)
 
-def apply_morphological(image, operation):
-    kernel = np.ones((5,5), np.uint8)
-    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    if operation == "Erosion":
-        return cv2.erode(gray, kernel, iterations=1)
-    elif operation == "Dilation":
-        return cv2.dilate(gray, kernel, iterations=1)
-
 def apply_adaptive_threshold(image):
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     return cv2.adaptiveThreshold(gray, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 11, 2)
@@ -90,9 +82,6 @@ def main():
                 processed_image = apply_edge_detection(uploaded_image, method)
             elif processing_option == "Histogram Equalization":
                 processed_image = apply_histogram_equalization(uploaded_image)
-            elif processing_option == "Morphological Ops":
-                operation = st.sidebar.selectbox("Operation", ["Erosion", "Dilation"])
-                processed_image = apply_morphological(uploaded_image, operation)
             elif processing_option == "Adaptive Thresholding":
                 processed_image = apply_adaptive_threshold(uploaded_image)
             elif processing_option == "Unsharp Masking":
