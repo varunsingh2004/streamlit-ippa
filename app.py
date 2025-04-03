@@ -58,7 +58,7 @@ def main():
     uploaded_image = load_image()
     processing_option = st.sidebar.selectbox(
         "Choose a Processing Technique",
-        ["Frequency Domain", "Edge Detection", "Histogram Equalization", "Morphological Ops", "Adaptive Thresholding", "Unsharp Masking"]
+        ["Frequency Domain", "Edge Detection", "Histogram Equalization",  "Adaptive Thresholding", "Unsharp Masking"]
     )
 
     if uploaded_image is not None:
