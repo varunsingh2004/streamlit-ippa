@@ -81,7 +81,7 @@ def main():
     uploaded_image = load_image()
     processing_option = st.sidebar.selectbox(
         "Choose a Processing Technique",
-        ["Frequency Domain", "Edge Detection", "Filters", "Histogram Equalization", "Adaptive Thresholding", "Unsharp Masking"]
+        ["Frequency Domain", "Edge Detection", "Filters", "Histogram Equalization", "Sketchify", "Unsharp Masking"]
     )
 
     if uploaded_image is not None:
@@ -109,7 +109,7 @@ def main():
             elif processing_option == "Histogram Equalization":
                 processed_image = apply_histogram_equalization(uploaded_image)
 
-            elif processing_option == "Adaptive Thresholding":
+            elif processing_option == "Sketchify":
                 processed_image = apply_adaptive_threshold(uploaded_image)
 
             elif processing_option == "Unsharp Masking":
